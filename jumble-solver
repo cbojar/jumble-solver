@@ -1,0 +1,19 @@
+#!/bin/bash
+DICTFILE='/usr/share/dict/words'
+WLEN=${#1}
+WCHARS="$1"
+DICT=$( grep -P "^.{$WLEN}\$" < $DICTFILE | tr [A-Z] [a-z] | grep -P "^[$WCHARS]{$WLEN}\$" );
+
+if [ $WLEN -le 10 ]; then
+	WORDS=$( bin/permute "$1" )
+
+	for WORD in $DICT; do
+		grep -i "^$WORD\$" <<< "$WORDS"
+	done
+else
+	for i in $( seq $WLEN ); do
+		CHAR=${WCHARS:$i:1}
+		DICT=$( grep "$CHAR" <<< "$DICT" )
+	done
+	echo "$DICT"
+fi
