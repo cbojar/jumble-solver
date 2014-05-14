@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<title></title>
+		<style type="text/css">
+			#not-found { vertical-align: middle; }
+			h2 { margin: 0; padding: 0; font-size: 12pt; }
+			code { white-space: pre; }
+		</style>
+		<script type="text/javascript">
+			function makeCode() {
+				var strs = document.getElementById("not-found").value.toString().split("\n");
+				var code = document.getElementById("code");
+
+				var curr_i = "";
+				var change_i = false;
+				var curr_j = "";
+				var change_j = false;
+				code.innerHTML = "";
+				for(var i = 0; i < strs.length; i++) {
+					if(strs[i].charAt(0) !== curr_i) {
+						curr_i = strs[i].charAt(0);
+						change_i = true;
+						code.innerHTML += "\t\t";
+						if(i !== 0) {
+							code.innerHTML += "}\n\t\telse ";
+						}
+
+						code.innerHTML += "if(str[i] == '" + curr_i + "')\n\t\t{\n";
+					}
+
+					if(change_i || strs[i].charAt(1) !== curr_j) {
+						curr_j = strs[i].charAt(1);
+						change_j = true;
+						if(!change_i) {
+							code.innerHTML += "\t\t\t\treturn 0;\n\t\t\t}\n\t\t\telse ";
+						} else {
+							code.innerHTML += "\t\t\t";
+						}
+
+						code.innerHTML += "if(str[i + 1] == '" + curr_j + "')\n\t\t\t{\n";
+					}
+
+					code.innerHTML += "\t\t\t\tif(str[i + 2] == '" + strs[i].charAt(2) + "') continue;\n";
+					change_i = false;
+					change_j = false;
+				}
+
+				code.innerHTML += "\t\t\t\treturn 0;\n\t\t\t}\n\t\t}";
+			}
+		</script>
+	</head>
+	<body>
+		<textarea id="not-found"></textarea> <button onclick="makeCode()">Make Code</button>
+		<br /><br />
+		<h2>Code:</h2>
+		<code id="code"></code>
+	</body>
+</html>
