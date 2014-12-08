@@ -763,9 +763,7 @@ int are_valid_3_letter_combos(char* str, int strlen) {
 			continue;
 		}
 
-		int index = (int)str[i] - 'a';
-
-		if(!in_char_array(valid_3_letter_combos[index][(int)str[i + 1] - 'a'], str[i + 2])) {
+		if(!in_char_array(valid_3_letter_combos[(int)str[i] - 'a'][(int)str[i + 1] - 'a'], str[i + 2])) {
 			return 0;
 		}
 		continue;
