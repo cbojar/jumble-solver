@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 	int c = strlen(letters);
 
 	qsort(letters, c, 1, compare_chars);
-	if(check2(letters, c) && check3(letters, c)) {
+	if(are_valid_2_letter_combos(letters, c) && are_valid_3_letter_combos(letters, c)) {
 		printf("%s\n", letters);
 	}
 
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 		swap(letters, k, l);
 		reverse(letters, k + 1, (int)NULL);
 
-		if(check2(letters, c) && check3(letters, c)) {
+		if(are_valid_2_letter_combos(letters, c) && are_valid_3_letter_combos(letters, c)) {
 			printf("%s\n", letters);
 		}
 	}
