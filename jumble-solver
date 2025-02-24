@@ -1,19 +1,53 @@
-#!/bin/bash
-DICTFILE='/usr/share/dict/words'
-WLEN=${#1}
-WCHARS="$1"
-DICT=$( grep -P "^.{$WLEN}\$" < $DICTFILE | tr [A-Z] [a-z] | grep -P "^[$WCHARS]{$WLEN}\$" );
+#!/usr/bin/env bash
 
-if [ $WLEN -le 10 ]; then
-	WORDS=$( bin/permute "$1" )
+arch="$(uname -m)"
 
-	for WORD in $DICT; do
-		grep -i "^$WORD\$" <<< "$WORDS"
-	done
-else
-	for i in $( seq $WLEN ); do
-		CHAR=${WCHARS:$i:1}
-		DICT=$( grep "$CHAR" <<< "$DICT" )
-	done
-	echo "$DICT"
-fi
+libdir="${HOME}/bin/lib"
+permute=''
+
+case "${arch}" in
+'x86_64')
+	permute="${libdir}/permute.x64"
+	;;
+'armv7l')
+	permute="${libdir}/permute.arm32"
+	;;
+'aarch64')
+	permute="${libdir}/permute.arm64"
+	;;
+*)
+	echo "Failed to find suitable permute for architecture: ${arch}" >&2
+	exit 1
+	;;
+esac
+
+for w in $@; do
+	WLEN=${#w}
+	WCHARS=$(tr [A-Z] [a-z] <<< "$w")
+	if [ $# -gt 1 ]; then
+		echo $(tr  [a-z] [A-Z] <<< "$WCHARS")
+		for i in $( seq $WLEN ); do
+			echo -n "-"
+		done
+		echo
+	fi
+
+	DICT=$(grep -P "^.{$WLEN}\$" < '/usr/share/dict/words' | tr [A-Z] [a-z] | grep -P "^[$WCHARS]{$WLEN}\$");
+
+	if [ $WLEN -le 10 ]; then
+		WORDS=$($permute "$WCHARS")
+
+		for WORD in $DICT; do
+			grep "^$WORD\$" <<< "$WORDS"
+		done
+	else
+		for i in $(seq $WLEN); do
+			CHAR=${WCHARS:$i:1}
+			DICT=$(grep "$CHAR" <<< "$DICT")
+		done
+		echo "$DICT"
+	fi
+	if [ $# -gt 1 ]; then
+		echo '********************************************************************************'
+	fi
+done
